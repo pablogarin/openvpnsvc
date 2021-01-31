@@ -1,0 +1,89 @@
+#!/bin/sh
+
+PID_FILE=/var/run/openvpnd.pid
+CMD="none"
+SERVERS_FOLDER=/etc/openvpn/ovpn_udp
+SELECTED_SERVER=""
+
+for arg in $@
+do
+	case "$arg" in 
+		start)
+			CMD="start"
+			;;
+		stop)
+			CMD="stop"
+			;;
+		restart)
+			CMD="restart"
+			;;
+		*)
+			echo "Invalid argument! Usage: $0 {start|stop|restart}"
+			exit 1
+	esac
+done
+
+[ "$CMD" = "none" ] && echo "Wrong initialization! Usage: start_vpn {start|restart|stop}" && exit 1
+
+set_selected_server() {
+	COUNT=0
+	SERVERS=$(ls $SERVERS_FOLDER/us*)
+	for SERVER in $SERVERS; do
+		COUNT=$((COUNT+1))
+	done
+	IND=$(shuf -i 1-$COUNT -n 1)
+	CURR_INDEX=0
+	for SERVER in $SERVERS; do
+		CURR_INDEX=$((CURR_INDEX+1))
+		[ "$CURR_INDEX" = "$IND" ] && SELECTED_SERVER=$SERVER
+	done
+}
+
+
+start_daemon() {
+	echo "Starting openvpn..."
+	PID=$(cat $PID_FILE)
+	[ ! "$PID" = "" ] && echo "Already running!" && exit 1
+	iptables -F
+	iptables -t nat -F
+	iptables -X
+	iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
+	iptables -A FORWARD -i tun0 -o wlan1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+	iptables -A FORWARD -i wlan1 -o tun0 -j ACCEPT
+	sh -c "iptables-save > /etc/iptables.ipv4.nat"
+	echo "Initializing VPN..."
+	set_selected_server
+	echo "Server: $SELECTED_SERVER"
+	openvpn --config "$SELECTED_SERVER" --auth-user-pass /etc/openvpn/auth.txt 2>&1 > /dev/null &
+	PID=$(ps aux|grep '[o]penvpn[^d]'|awk '{print $2}')
+	touch $PID_FILE && echo "$PID" > $PID_FILE
+	echo "OpenVPN started."
+}
+
+stop_daemon() {
+	echo "Stoping openvpn..."
+	PID=$(cat $PID_FILE)
+	[ "$PID" = "" ] && echo "Not running!" && exit 1
+	kill -9 $PID
+	echo "" > $PID_FILE
+	echo "OpenVPN stoped."
+}
+
+case "$CMD" in
+	start)
+		start_daemon
+		exit 0
+		;;
+	stop)
+		stop_daemon
+		exit 0
+		;;
+	restart)
+		stop_daemon
+		start_daemon
+		exit 0
+		;;
+	*)
+		echo ":)"
+esac
+
