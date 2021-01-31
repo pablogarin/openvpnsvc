@@ -3,11 +3,12 @@ description=OpenVPN Daemon service
 
 [Service]
 Type=forking
+User=root
 PIDFile=/var/run/openvpnd.pid
-WorkingDirectory=/home/pi/openvpnsvc
-ExecStart=/home/pi/openvpnsvc/openvpnd start
-ExecStop=/home/pi/openvpnsvc/openvpnd stop
-ExecReload=/home/pi/openvpnsvc/openvpnd restart
+Restart=always
+ExecStart=/usr/bin/openvpnd start
+ExecStop=/usr/bin/openvpnd stop
+ExecReload=/usr/bin/openvpnd restart
 
 [Install]
 WantedBy=multi-user.target
