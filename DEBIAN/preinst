@@ -1,3 +1,4 @@
 #!/bin/sh
-wget -P /tmp/ovpn https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
-unzip -d /etc/openvpnd/ /tmp/ovpn/ovpn.zip
+wget --quiet -P /tmp/ovpn https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
+unzip -qq -d /etc/openvpnd/ /tmp/ovpn/ovpn.zip
+rm /tmp/ovpn/ovpn.zip

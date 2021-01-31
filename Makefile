@@ -12,6 +12,7 @@ build:
 	mkdir $(temp_folder)/etc/openvpnd/poststart.d
 	mkdir $(temp_folder)/etc/openvpnd/poststop.d
 	cp ./openvpnd.conf $(temp_folder)/etc/openvpnd/
+	touch $(temp_folder)/etc/openvpnd/auth.txt
 	dpkg-deb --build $(temp_folder)
 	mv $(temp_folder).deb .
 	rm -rf $(temp_folder)

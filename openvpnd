@@ -62,7 +62,7 @@ start_daemon() {
 	echo "Initializing VPN..."
 	set_selected_server
 	echo "Server: $SELECTED_SERVER"
-	openvpn --config "$SELECTED_SERVER" --auth-user-pass /etc/openvpn/auth.txt 2>&1 > /dev/null &
+	openvpn --config "$SELECTED_SERVER" --auth-user-pass $AUTH_FILE 2>&1 > /dev/null &
 	PID=$(echo $!)
 	touch $PID_FILE && echo "$PID" > $PID_FILE
 	[ -d "$POST_START_SCRIPTS_FOLDER" ] && run_post_start_scripts
