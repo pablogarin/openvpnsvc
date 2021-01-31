@@ -1,0 +1,10 @@
+Package: openvpnd
+Version: 1.0
+Architecture: armhf
+Essential: no
+Priority: optional
+Depends: openvpn, unzip
+Maintainer: Pablo Garin
+Description: OpenVPN Daemon, which enables you to have easy
+  control over connecting/disconnecting from any VPN Server.
+
