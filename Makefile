@@ -8,6 +8,8 @@ build:
 	cp ./openvpnd $(temp_folder)/usr/bin
 	mkdir -p $(temp_folder)/etc/systemd/system
 	cp ./openvpnd.service $(temp_folder)/etc/systemd/system/
+	mkdir $(temp_folder)/etc/openvpnd/
+	cp ./openvpnd.conf $(temp_folder)/etc/openvpnd/
 	dpkg-deb --build $(temp_folder)
 	mv $(temp_folder).deb .
 	rm -rf $(temp_folder)
