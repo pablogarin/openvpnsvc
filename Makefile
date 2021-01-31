@@ -9,6 +9,8 @@ build:
 	mkdir -p $(temp_folder)/etc/systemd/system
 	cp ./openvpnd.service $(temp_folder)/etc/systemd/system/
 	mkdir $(temp_folder)/etc/openvpnd/
+	mkdir $(temp_folder)/etc/openvpnd/poststart.d
+	mkdir $(temp_folder)/etc/openvpnd/poststop.d
 	cp ./openvpnd.conf $(temp_folder)/etc/openvpnd/
 	dpkg-deb --build $(temp_folder)
 	mv $(temp_folder).deb .
