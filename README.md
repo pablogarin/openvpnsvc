@@ -16,7 +16,7 @@ username_really_long_hash
 password_also_long_hash
 `
 
-(Please notice the new line at the end of the file).
+(Remember to add a new line at the end of the file).
 
 ## Build and install
 
